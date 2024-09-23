@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch API</title>
+    <style>
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full viewport height */
+            flex-direction: column; /* Stack children vertically */
+        }
+
+        .centered-div {
+            width: 60%; /* Adjust as needed */
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 11px 19px rgba(0, 0, 0, 0.2);
+            overflow: auto; /* Enables scrolling if content overflows */
+            word-wrap: break-word; /* Forces long words to break to the next line */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 200px; /* Optional: Ensures enough height */
+        }
+
+        p {
+            margin: 10px 0; /* Adds spacing between paragraphs */
+        }
+
+        strong {
+            font-weight: bold;
+            display: block;
+            margin-top: 20px; /* Adds space above the author */
+        }
+
+        h1 {
+            font-style: italic; /* Italic style for the heading */
+            margin-bottom: 20px; /* Adds space below the heading */
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #FF677D;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #FFB3BA; /* Lighten the button on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="container">
+        <h1>Quotes to Inspire</h1> <!-- Add your heading here -->
+        <div class="centered-div" id="quotes-container"></div>
+        <!-- Add the refresh button here -->
+        <button onclick="refreshPage()">Get Another Quote</button>
+    </div>
+
+    <script>
+        // Function to get a random light color
+        function getRandomLightColor() {
+            const colors = ['#FFB3BA', '#FFDFBA', '#FFABAB', '#FFC3A0', '#FF677D', '#D4A5A5'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // Function to lighten or darken a color
+        function shadeColor(color, percent) {
+            const num = parseInt(color.slice(1), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) + amt;
+            const G = (num >> 8 & 0x00FF) + amt;
+            const B = (num & 0x0000FF) + amt;
+
+            return `#${(0x1000000 + (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 + (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 + (B < 255 ? (B < 1 ? 0 : B) : 255)).toString(16).slice(1)}`;
+        }
+
+        // Set a random light color for the centered div
+        const centeredColor = getRandomLightColor();
+        document.getElementById('quotes-container').style.backgroundColor = centeredColor;
+
+        // Set a lighter shade for the container div
+        document.getElementById('container').style.backgroundColor = shadeColor(centeredColor, 20); // Lighter shade
+
+        fetch("https://programming-quotesapi.vercel.app/api/bulk")
+        .then((data) => {
+            return data.json();
+        })
+        .then((objectData) => {
+            console.log(objectData);
+            
+            // Display the first quote from the array
+            let quoteData = `
+                <p>"${objectData[0].quote}"</p>
+                <p><strong>- ${objectData[0].author}</strong></p>
+            `;
+            
+            document.getElementById("quotes-container").innerHTML = quoteData;
+        });
+
+        // Function to refresh the page
+        function refreshPage() {
+            window.location.reload();
+        }
+    </script>
+</body>
+</html>
+
