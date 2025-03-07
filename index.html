@@ -80,7 +80,7 @@
        
       
 
-        fetch("https://api.quotable.io/random")
+        fetch("https://zenquotes.io/api/random")
         .then((data) => {
             return data.json();
         })
@@ -89,8 +89,8 @@
             
            
             let quoteData = `
-                <p>"${objectData.content}"</p>
-                <p><strong>- ${objectData.author}</strong></p>
+                <p>"${objectData.q}"</p>
+                <p><strong>- ${objectData.a}</strong></p>
             `;
             
             document.getElementById("quotes-container").innerHTML = quoteData;
